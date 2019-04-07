@@ -6,7 +6,10 @@
 
 #pragma once
 #include "IntensityImage.h"
+#include <vector>
 class IntensityImageStudent : public IntensityImage {
+private:
+	std::vector<Intensity> Pixels;
 public:
 	IntensityImageStudent();
 	IntensityImageStudent(const IntensityImageStudent &other);

@@ -1,76 +1,71 @@
 #include "RGBImageStudent.h"
 
-RGBImageStudent::RGBImageStudent() : RGBImage() {
-	int throwError = 0, e = 1 / throwError; //Throws error without the need to include a header
-	//TODO: Nothing
-}
+RGBImageStudent::RGBImageStudent() : RGBImage() { /* Nothing to do */ }
 
 RGBImageStudent::RGBImageStudent(const RGBImageStudent &other) : RGBImage(other.getWidth(), other.getHeight()) {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: Create a copy from the other object
+	// To prevent multiple executions AND more importantly ensuring that for some reason the width or height is changed according to a get.
+	int pixelAmount = other.getWidth() * other.getHeight();
+	// Looping through all the pixels and settting them.
+	for (int pixelCount = 0; pixelCount < pixelAmount; pixelCount++) {
+		setPixel(pixelCount, other.getPixel(pixelCount));
+	}
 }
 
 
 RGBImageStudent::RGBImageStudent(const int width, const int height) : RGBImage(width, height) {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: Initialize pixel storage
+	// Resizing based on new width and height (which clears on it's own).
+	Pixels.resize(width*height);
 }
 
-RGBImageStudent::~RGBImageStudent() {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: delete allocated objects
-}
+RGBImageStudent::~RGBImageStudent() { /* Nothing to clear */ }
 
 void RGBImageStudent::set(const int width, const int height) {
+	// In the event of a function call, we're assuming everything needs to go. 
+	// We can't keep images with wrong height and widths.
+	
+	// Resizing already calls the  "erase(begin(), end());" so we won't do that seperately.
+	Pixels.resize(width*height);
+	
+	// Making sure that our get calls don't crash inadvertely
 	RGBImage::set(width, height);
-	int throwError = 0, e = 1 / throwError;
-	//TODO: resize or create a new pixel storage (Don't forget to delete the old storage)
+	
 }
 
 void RGBImageStudent::set(const RGBImageStudent &other) {
 	RGBImage::set(other.getWidth(), other.getHeight());
-	int throwError = 0, e = 1 / throwError;
-	//TODO: resize or create a new pixel storage and copy the object (Don't forget to delete the old storage)
+
+
+	// To prevent multiple executions AND more importantly ensuring that for some reason the width or height is changed according to a get.
+	int pixelAmount = other.getWidth()*other.getHeight();
+
+	// Resizing already calls the  "erase(begin(), end());" so we won't do that seperately.
+	Pixels.resize(pixelAmount);
+
+	// each pixel gets written into a new pixel.
+	for (int pixelCount = 0; pixelCount < pixelAmount; pixelCount++) {
+		setPixel(pixelCount, other.getPixel(pixelCount));
+	}
 }
 
+
+// We don't want to make multiple insertation functions so we'll create a series of interfaces that do the work.
 void RGBImageStudent::setPixel(int x, int y, RGB pixel) {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: no comment needed :)
+	int pixelID = (y * RGBImage::getWidth()) + x; // order of operations is very important so double ensuring it with braces
+	setPixel(pixelID, pixel);
 }
-
+      
 void RGBImageStudent::setPixel(int i, RGB pixel) {
-	int throwError = 0, e = 1 / throwError;
-	/*
-	* TODO: set pixel i in "Row-Major Order"
-	*
-	*
-	* Original 2d image (values):
-	* 9 1 2
-	* 4 3 5
-	* 8 7 8
-	*
-	* 1d representation (i, value):
-	* i		value
-	* 0		9
-	* 1		1
-	* 2		2
-	* 3		4
-	* 4		3
-	* 5		5
-	* 6		8
-	* 7		7
-	* 8		8
-	*/
+	// Writing to a specific memory point with error catching for outside.
+	Pixels.at(i) = pixel;
 }
 
 RGB RGBImageStudent::getPixel(int x, int y) const {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: no comment needed :)
-	return 0;
+	// Masker function so calculation logic can be done at class level.
+	int i = y * RGBImage::getWidth() + x; // order of operations is very important so double ensuring it with braces
+	return getPixel(i);
 }
 
 RGB RGBImageStudent::getPixel(int i) const {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: see setPixel(int i, RGB pixel)
-	return 0;
+	// Returing a single pixel from the Pixels with at check for error catching (debugging)
+	return Pixels.at(i);
 }

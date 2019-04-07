@@ -1,75 +1,69 @@
 #include "IntensityImageStudent.h"
 
-IntensityImageStudent::IntensityImageStudent() : IntensityImage() {
-	int throwError = 0, e = 1 / throwError; //Throws error without the need to include a header
-	//TODO: Nothing
-}
+IntensityImageStudent::IntensityImageStudent() : IntensityImage() {}
 
 IntensityImageStudent::IntensityImageStudent(const IntensityImageStudent &other) : IntensityImage(other.getWidth(), other.getHeight()) {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: Create a copy from the other object
+	// To prevent multiple executions AND more importantly ensuring that for some reason the width or height is changed according to a get.
+	int pixelAmount = other.getWidth() * other.getHeight();
+	// Looping through all the pixels and settting them.
+	for (int pixelCount = 0; pixelCount < pixelAmount; pixelCount++) {
+		setPixel(pixelCount, other.getPixel(pixelCount));
+	}
 }
 
 IntensityImageStudent::IntensityImageStudent(const int width, const int height) : IntensityImage(width, height) {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: Initialize pixel storage
+	// Resizing based on new width and height (which clears on it's own).
+	Pixels.resize(width*height);
 }
 
-IntensityImageStudent::~IntensityImageStudent() {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: delete allocated objects
-}
+IntensityImageStudent::~IntensityImageStudent() { /* Nothing to clear */}
 
 void IntensityImageStudent::set(const int width, const int height) {
+	// In the event of a function call, we're assuming everything needs to go. 
+	// We can't keep images with wrong height and widths.
+
+	// Resizing already calls the  "erase(begin(), end());" so we won't do that seperately.	
+	Pixels.resize(width*height);
+
+	
+	// Making sure that our get calls don't crash inadvertely
 	IntensityImage::set(width, height);
-	int throwError = 0, e = 1 / throwError;
-	//TODO: resize or create a new pixel storage (Don't forget to delete the old storage)
+
 }
 
 void IntensityImageStudent::set(const IntensityImageStudent &other) {
 	IntensityImage::set(other.getWidth(), other.getHeight());
-	int throwError = 0, e = 1 / throwError;
-	//TODO: resize or create a new pixel storage and copy the object (Don't forget to delete the old storage)
+
+	// To prevent multiple executions AND more importantly ensuring that for some reason the width or height is changed according to a get.
+	int pixelAmount = other.getWidth()*other.getHeight();
+
+	// Resizing already calls the  "erase(begin(), end());" so we won't do that seperately.
+	Pixels.resize(pixelAmount);
+
+	// each pixel gets written into a new pixel.
+	for (int pixelCount = 0; pixelCount < pixelAmount; pixelCount++) {
+		setPixel(pixelCount, other.getPixel(pixelCount));
+	}
 }
 
+// We don't want to make multiple insertation functions so we'll create a series of interfaces that do the work.
 void IntensityImageStudent::setPixel(int x, int y, Intensity pixel) {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: no comment needed :)
+	int pixelID = (y * IntensityImage::getWidth()) + x; // order of operations is very important so double ensuring it with braces
+	setPixel(pixelID, pixel);
 }
 
 void IntensityImageStudent::setPixel(int i, Intensity pixel) {
-	int throwError = 0, e = 1 / throwError;
-	/*
-	* TODO: set pixel i in "Row-Major Order"
-	*
-	*
-	* Original 2d image (values):
-	* 9 1 2
-	* 4 3 5
-	* 8 7 8
-	*
-	* 1d representation (i, value):
-	* i		value
-	* 0		9
-	* 1		1
-	* 2		2
-	* 3		4
-	* 4		3
-	* 5		5
-	* 6		8
-	* 7		7
-	* 8		8
-	*/
+	// Writing to a specific memory point with error catching for outside.
+	Pixels.at(i) = pixel;
 }
 
 Intensity IntensityImageStudent::getPixel(int x, int y) const {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: no comment needed :)
-	return 0;
+	// Masker function so calculation logic can be done at class level.
+	int i = y * IntensityImage::getWidth() + x;// order of operations is very important so double ensuring it with braces
+	return getPixel(i);
 }
 
 Intensity IntensityImageStudent::getPixel(int i) const {
-	int throwError = 0, e = 1 / throwError;
-	//TODO: see setPixel(int i, RGB pixel)
-	return 0;
+	// Returing a single pixel from the Pixels with at check for error catching (debugging)
+	return Pixels.at(i);;
 }
